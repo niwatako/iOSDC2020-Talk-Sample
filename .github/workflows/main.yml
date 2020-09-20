@@ -26,7 +26,8 @@ env:
 jobs:
   test:
     runs-on: macOS-latest
-    env: # Jobの中でも定義できる。jobの中でだけ有効
+    # Jobの中でも定義できる。jobの中でだけ有効
+    env:
     MINT_PATH: mint/lib
     MINT_LINK_PATH: mint/bin
   steps:
@@ -44,11 +45,11 @@ jobs:
       run: brew install mint
     - name: Cache Mint packages
       uses: actions/cache@v2
-        with:
-          path: mint
-          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
-          restore-keys: |
-            ${{ runner.os }}-mint-
+      with:
+        path: mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+        restore-keys: |
+          ${{ runner.os }}-mint-
       # Carthage と Cocoapodsもキャッシュ使えるので actions/cache@v2 Readme参照
     - name: Install Carthage frameworks
       run: make install-carthage
