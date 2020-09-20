@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - Docs/**
+      - README.md
+  pull_request:
+    branches:
+      - develop
+    paths-ignore:
+      - Docs/**
+      - README.md
+
+env:
+  DEVELOP_DIR: /Applications/Xcode_11.6.app/Contents/Developer
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    runs-on: macOS-latest
+    env: # Jobの中でも定義できる。jobの中でだけ有効
+    MINT_PATH: mint/lib
+    MINT_LINK_PATH: mint/bin
+  steps:
+    - uses: actions/checkout@2v
+    - name: Cache Gems
+      uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+    - name: Install Bundled Gems
+      run: make install-bundler
+    - name: Install Mint
+      run: brew install mint
+    - name: Cache Mint packages
+      uses: actions/cache@v2
+        with:
+          path: mint
+          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+          restore-keys: |
+            ${{ runner.os }}-mint-
+      # Carthage と Cocoapodsもキャッシュ使えるので actions/cache@v2 Readme参照
+    - name: Install Carthage frameworks
+      run: make install-carthage
+    - name: Generate Xcode project and isntall Pods
+      run: make generate-xcodeproj
+      
+    - name: Xcode build
+      run: make build-debug
+    - name: Xcode test
+      run: make test
