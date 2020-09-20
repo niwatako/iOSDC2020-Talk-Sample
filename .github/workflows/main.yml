@@ -31,7 +31,7 @@ jobs:
     MINT_PATH: mint/lib
     MINT_LINK_PATH: mint/bin
   steps:
-    - uses: actions/cache@2v
+    - uses: actions/cache@v2
     - name: Cache Gems
       uses: actions/cache@v2
       with:
