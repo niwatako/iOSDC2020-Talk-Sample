@@ -28,10 +28,12 @@ jobs:
     runs-on: macOS-latest
     # Jobの中でも定義できる。jobの中でだけ有効
     env:
-    MINT_PATH: mint/lib
-    MINT_LINK_PATH: mint/bin
-  steps:
-    - uses: actions/cache@v2
+      MINT_PATH: mint/lib
+      MINT_LINK_PATH: mint/bin
+
+    steps:
+    - uses: actions/checkout@v2
+
     - name: Cache Gems
       uses: actions/cache@v2
       with:
@@ -55,7 +57,7 @@ jobs:
       run: make install-carthage
     - name: Generate Xcode project and isntall Pods
       run: make generate-xcodeproj
-      
+
     - name: Xcode build
       run: make build-debug
     - name: Xcode test
